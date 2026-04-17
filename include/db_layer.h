@@ -1,0 +1,1 @@
+// DB 접근 함수 선언 (get_balance, update_balance 등)

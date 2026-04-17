@@ -1,0 +1,16 @@
+# 1. C/C++ 빌드 결과물 (Object 파일 및 실행 파일)
+*.o
+*.out
+*.exe
+transfer_system
+
+# 2. VS Code 관련 설정 (개인 작업 환경 설정이므로 제외)
+.vscode/
+
+# 3. OS 자동 생성 파일 (Windows / Mac 찌꺼기 파일)
+Thumbs.db
+.DS_Store
+
+# 4. 디버깅 및 코어 덤프 파일
+*.log
+core
