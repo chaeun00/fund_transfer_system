@@ -15,7 +15,7 @@ int main(void)
     srand(time(NULL)); // 랜덤 시드 초기화
     pthread_t threads[NUM_THREADS];
 
-    printf("[1단계] 멀티스레드 이체 시스템 시작\n");
+    printf("[2단계] 단순 Mutex 적용 멀티스레드 이체 시스템 시작\n");
     printf("DB 초기화 중...\n\n");
     db_init(); // DB 초기화
 

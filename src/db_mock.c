@@ -1,5 +1,5 @@
 // 실제 메모리(배열)에 데이터를 저장하고 수정하는 로직.
-// 의도적으로 동기화를 하지 않아 문제가 발생하도록 둠.
+// [2단계] 뮤텍스 초기화 로직 추가
 
 #include <stdio.h>
 #include "db_layer.h"
@@ -13,7 +13,7 @@ void db_init()
     {
         accounts[i].account_id = i;
         accounts[i].balance = INITIAL_BALANCE;
-        // 1단계에서는 뮤텍스(lock) 초기화 생략.
+        pthread_mutex_init(&accounts[i].lock, NULL); // 각 계좌(Row)마다 고유한 Mutex 생성
     }
 }
 
@@ -24,15 +24,8 @@ int db_get_balance(int account_id)
 
 void db_update_balance(int account_id, int amount)
 {
-    // [Race Condition 발생 지점]
-    // 여러 스레드가 동시에 이 코드를 실행하면 잔액이 유실.
-
     int current_balance = accounts[account_id].balance;
-
-    // CPU가 다른 스레드로 컨텍스트 스위칭(Context Switching)을 하도록
-    // 고의로 약간의 지연 시간을 줌. (DB 통신 지연 모사)
-    for (volatile int i = 0; i < 10000; i++);
-
+    for (volatile int i = 0; i < 10000; i++); // 지연 시간 유지해도 Race Condition을 락이 막아줄 것
     accounts[account_id].balance = current_balance + amount;
 }
 
@@ -45,4 +38,10 @@ void db_print_total_balance()
         total += accounts[i].balance;
     }
     printf("=== 시스템 총 잔액: %lld원 ===\n", total);
+}
+
+pthread_mutex_t* db_get_lock(int account_id)
+{
+    // 외부 스레드가 특정 계좌의 자물쇠를 얻을 수 있도록 포인터 반환
+    return &accounts[account_id].lock;
 }
